@@ -85,24 +85,8 @@ func (l *Log) initLog(opts ...Option) {
 	l.log.SetOutput(l.loadOut())
 }
 
-func (l *Log) SetLevel(level level.Level) {
-	l.level = level
-}
-
-func (l *Log) SetOutLevel(outLevel OutStatus) {
-	l.outLevel = outLevel
-}
-
 func (l *Log) SetFormatter(f logrus.Formatter) {
 	l.formatter = f
-}
-
-func (l *Log) SetReportElastic(isReport bool) {
-	l.reportElastic = isReport
-}
-
-func (l *Log) SetReportCaller(isReport bool) {
-	l.reportCaller = isReport
 }
 
 func (l *Log) Debug(args ...interface{}) {
@@ -138,6 +122,12 @@ func (l *Log) Fatal(args ...interface{}) {
 }
 
 func (l *Log) Print(args ...interface{}) {
+	if len(args) > 0 {
+		if args[0] == "sql" {
+			l.log.Print(reorganize(args...)...)
+			return
+		}
+	}
 	l.log.Print(args...)
 }
 
