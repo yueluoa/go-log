@@ -32,7 +32,7 @@ func NewLogFormat() LogFormat {
 	}
 }
 
-func (ftf *fixedTextFormatter) Format(entry *logrus.Entry) ([]byte, error) {
+func (ftf fixedTextFormatter) Format(entry *logrus.Entry) ([]byte, error) {
 	keys := make([]string, 0, len(entry.Data))
 	for k, _ := range entry.Data {
 		keys = append(keys, k)
