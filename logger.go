@@ -9,5 +9,12 @@ type Logger interface {
 	ErrorF(format string, args ...interface{})
 	Warn(args ...interface{})
 	Fatal(args ...interface{})
-	Print(args ...interface{})
+}
+
+func New(path string) Logger {
+	return newLog(path, loadConfig()...)
+}
+
+func NewLog(path string, opts ...Option) Logger {
+	return newLog(path, opts...)
 }

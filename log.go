@@ -13,15 +13,14 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-const DefaultDir = "./log/default"
+const defaultDir = "./log/default"
 
-const MaxLogFileCount = 8 // 文件最大保存份数
+const maxLogFileCount = 8 // 文件最大保存份数
 
 type OutStatus uint8
 
 const (
-	Unknown OutStatus = iota
-	Terminal
+	Terminal OutStatus = iota
 	File
 	TerminalAndFile
 )
@@ -36,14 +35,6 @@ type Log struct {
 	elasticIndex  string
 	path          string // 文件路径
 	fileName      string
-}
-
-func New(path string) Logger {
-	return newLog(path, loadConfig()...)
-}
-
-func NewLog(path string, opts ...Option) Logger {
-	return newLog(path, opts...)
 }
 
 func newLog(path string, opts ...Option) *Log {
@@ -133,24 +124,19 @@ func (l *Log) Print(args ...interface{}) {
 
 func (l *Log) loadOut() io.Writer {
 	if l.path == "" {
-		l.path = DefaultDir
+		l.path = defaultDir
 	}
 	var out io.Writer
 	if l.outLevel == Terminal {
 		out = os.Stdout
 	}
-	if l.outLevel == File ||
-		l.outLevel == TerminalAndFile ||
-		l.outLevel == Unknown {
+	if l.outLevel == File || l.outLevel == TerminalAndFile {
 		writer, err := initLogFile(l.path, l.fileName)
 		if err != nil {
 			fmt.Println(err)
 			return out
 		}
 		out = writer
-		if l.outLevel == Unknown {
-			out = writer
-		}
 		if l.outLevel == TerminalAndFile {
 			out = io.MultiWriter([]io.Writer{writer, os.Stdout}...)
 		}
@@ -170,7 +156,7 @@ func initLogFile(path, fileName string) (io.Writer, error) {
 	filePath := fmt.Sprintf("%s/%s", path, fileName)
 	writer, err := rotateLogs.New(
 		filePath+fileSuffix,
-		rotateLogs.WithRotationCount(MaxLogFileCount),
+		rotateLogs.WithRotationCount(maxLogFileCount),
 		rotateLogs.WithRotationTime(time.Hour*24))
 	if err != nil {
 		return nil, fmt.Errorf("failed to create rotatelogs: %v\n", err)
@@ -182,9 +168,8 @@ func initLogFile(path, fileName string) (io.Writer, error) {
 // 默认配置
 func loadConfig() []Option {
 	opts := []Option{
-		WithLevel(level.InfoLevel),
-		WithReportElastic(true),
-		WithOutLevel(File),
+		WithReportElastic(false), // 默认不推送到es
+		WithOutLevel(Terminal),
 	}
 
 	return opts

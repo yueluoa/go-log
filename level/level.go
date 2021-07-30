@@ -1,5 +1,9 @@
 package level
 
+import (
+	"strings"
+)
+
 type Level uint32
 
 var AllLevels = []Level{
@@ -41,4 +45,25 @@ func (lv Level) String() string {
 	}
 
 	return "unknown"
+}
+
+func ParseLevel(lv string) Level {
+	switch strings.ToLower(lv) {
+	case "panic":
+		return PanicLevel
+	case "fatal":
+		return FatalLevel
+	case "error":
+		return ErrorLevel
+	case "warn", "warning":
+		return WarnLevel
+	case "info":
+		return InfoLevel
+	case "debug":
+		return DebugLevel
+	case "trace":
+		return TraceLevel
+	}
+
+	return InfoLevel
 }

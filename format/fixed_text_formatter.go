@@ -10,11 +10,11 @@ import (
 )
 
 const (
-	FieldMsgKey   = "_msg"
-	FieldLevelKey = "_level"
-	FieldTimeKey  = "_time"
-	FieldFuncKey  = "_func"
-	FieldFileKey  = "_file"
+	fieldMsgKey   = "_msg"
+	fieldLevelKey = "_level"
+	fieldTimeKey  = "_time"
+	fieldFuncKey  = "_func"
+	fieldFileKey  = "_file"
 )
 
 type Field struct {
@@ -45,15 +45,15 @@ func (ftf *fixedTextFormatter) Format(entry *logrus.Entry) ([]byte, error) {
 	if entry.HasCaller() {
 		fieldFunc := entry.Caller.Function
 		fieldFile := fmt.Sprintf("%s:%d", entry.Caller.File, entry.Caller.Line)
-		ftf.D = append(ftf.D, &Field{Key: FieldFuncKey, Value: fieldFunc})
-		ftf.D = append(ftf.D, &Field{Key: FieldFileKey, Value: fieldFile})
+		ftf.D = append(ftf.D, &Field{Key: fieldFuncKey, Value: fieldFunc})
+		ftf.D = append(ftf.D, &Field{Key: fieldFileKey, Value: fieldFile})
 	}
 
 	for _, v := range keys {
 		ftf.D = append(ftf.D, &Field{Key: v, Value: entry.Data[v]})
 	}
 	if entry.Message != "" {
-		ftf.D = append(ftf.D, &Field{Key: FieldMsgKey, Value: entry.Message})
+		ftf.D = append(ftf.D, &Field{Key: fieldMsgKey, Value: entry.Message})
 	}
 
 	b := &bytes.Buffer{}

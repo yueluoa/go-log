@@ -2,7 +2,6 @@ package go_log
 
 import (
 	"github.com/iiiang/go-log/level"
-
 	"github.com/sirupsen/logrus"
 )
 
@@ -24,9 +23,9 @@ func NewLogOption(f func(*Log)) *logOption {
 	}
 }
 
-func WithLevel(level level.Level) Option {
+func WithLevel(lv string) Option {
 	return NewLogOption(func(l *Log) {
-		l.level = level
+		l.level = level.ParseLevel(lv)
 	})
 }
 
